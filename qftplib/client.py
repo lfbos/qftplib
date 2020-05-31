@@ -3,7 +3,7 @@ from ftplib import FTP
 
 import paramiko
 
-from exceptions import InvalidConnection
+from qftplib.exceptions import InvalidConnection
 
 
 class FTPClient:

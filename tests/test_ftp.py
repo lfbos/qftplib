@@ -4,8 +4,8 @@ import unittest
 
 import pytest
 
-from client import FTPClient
-from exceptions import InvalidConnection
+from qftplib.client import FTPClient
+from qftplib.exceptions import InvalidConnection
 
 
 class FTPTest(unittest.TestCase):
