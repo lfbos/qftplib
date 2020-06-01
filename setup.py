@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name='qftplib',
-    version='0.0.1',
+    version='1.0',
     author='Luis Boscan',
     author_email='lboscannava@gmail.com',
     description=(
