@@ -16,7 +16,7 @@ setup(
         'Simple library to connect and interact to FTP/SFTP servers'
     ),
     license='MIT',
-    url='http://packages.python.org/qftplib',
+    url='https://github.com/lfbos/qftplib',
     packages=['qftplib', 'tests'],
     long_description=read('README.md'),
     classifiers=[
