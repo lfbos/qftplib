@@ -15,6 +15,11 @@ class FTPTest(unittest.TestCase):
     password = os.environ.get('FTP_PASS_TEST', '123')
     dir = os.environ.get('FTP_DIR_TEST', '/pruebas_sftp')
 
+    def setUp(self):
+        print(self.host)
+        print(self.dir)
+        print(self.dir)
+
     def test_name(self):
         with FTPClient(self.host, self.user, self.password) as ftp:
             assert str(ftp) == f'<FTPClient({self.host}, {self.user}, xxxx, port = 21, protocol = ftp)>'
