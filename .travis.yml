@@ -1,14 +1,23 @@
-language: python
-python:
-  - 3.8
-before_install:
-  - python --version
-  - pip install -U pip
-  - pip install -U pytest
-  - pip install -U pytest-cov
-install:
-  - pip install -r requirements.txt
-script:
-  - pytest --cov-fail-under=$MIN_COVERAGE_PERCENTAGE --cov=./
-after_success:
-  - codecov
+jobs:
+  include:
+    - stage: test
+      language: python
+      python:
+        - 3.8
+      before_install:
+        - python --version
+        - pip install -U pip
+        - pip install -U pytest
+        - pip install -U pytest-cov
+      install:
+        - pip install -r requirements.txt
+      script:
+        - pytest --cov-fail-under=$MIN_COVERAGE_PERCENTAGE --cov=./
+      after_success:
+        - codecov
+    - stage: upload to pypi
+      language: python
+      python:
+        - 3.8
+      script:
+        - python -c "print('Deploy to pypi')"
