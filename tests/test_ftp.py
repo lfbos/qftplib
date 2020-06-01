@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 import unittest
 
 import pytest
@@ -27,8 +28,7 @@ class FTPTest(unittest.TestCase):
         with FTPClient(self.host, self.user, self.password) as ftp:
             directory_files = ftp.listdir(self.dir)
 
-            assert len(directory_files) == 10
-            assert '/pruebas_sftp/tgt' in directory_files
+            assert len(directory_files) > 0
 
     def test_pwd_chdir(self):
         with FTPClient(self.host, self.user, self.password) as ftp:
@@ -41,29 +41,31 @@ class FTPTest(unittest.TestCase):
     def test_rmdir_mkdir(self):
         with FTPClient(self.host, self.user, self.password) as ftp:
             ftp.chdir(self.dir)
-            ftp.mkdir('test')
+            new_dir = str(int(time.time()))
+            ftp.mkdir(new_dir)
             files = ftp.listdir(self.dir)
 
-            assert f'{self.dir}/test' in files
+            assert f'{self.dir}/{new_dir}' in files
 
-            ftp.rmdir('test')
+            ftp.rmdir(new_dir)
 
             files = ftp.listdir(self.dir)
 
-            assert f'{self.dir}/test' not in files
+            assert f'{self.dir}/{new_dir}' not in files
 
     def test_rename(self):
         with FTPClient(self.host, self.user, self.password) as ftp:
             ftp.chdir(self.dir)
-            ftp.mkdir('test')
+            new_dir = str(int(time.time()))
+            ftp.mkdir(new_dir)
 
-            ftp.rename('test', 'test_renamed')
+            ftp.rename(new_dir, f'{new_dir}_renamed')
 
             files = ftp.listdir(self.dir)
 
-            assert f'{self.dir}/test_renamed' in files
+            assert f'{self.dir}/{new_dir}_renamed' in files
 
-            ftp.rmdir('test_renamed')
+            ftp.rmdir(f'{new_dir}_renamed')
 
     def test_put_delete(self):
         with FTPClient(self.host, self.user, self.password) as ftp, tempfile.NamedTemporaryFile() as f:
@@ -79,7 +81,8 @@ class FTPTest(unittest.TestCase):
     def test_get(self):
         with FTPClient(self.host, self.user, self.password) as ftp, tempfile.NamedTemporaryFile(mode='w') as f:
             files = ftp.listdir(self.dir)
-            remotepath = next((f for f in files if f.endswith('csv')), None)
+
+            remotepath = next((f for f in files if f.endswith('.csv') or f.endswith('.txt')), None)
 
             ftp.get(remotepath, f.name)
 
