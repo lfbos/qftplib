@@ -3,4 +3,5 @@ omit =
     tests/*
     qftplib/__init__.py
     qftplib/exceptions.py
+    setup.py
 source = qftplib

@@ -70,7 +70,11 @@ class FTPTest(unittest.TestCase):
     def test_put_delete(self):
         with FTPClient(self.host, self.user, self.password) as ftp, tempfile.NamedTemporaryFile() as f:
             remotepath = os.path.join(self.dir, os.path.basename(f.name))
-            ftp.put(f.name, remotepath)
+
+            def file_downloaded():
+                print("File downloaded successfully")
+
+            ftp.put(f.name, remotepath, callback=file_downloaded)
 
             ftp.delete(remotepath)
 
@@ -84,7 +88,36 @@ class FTPTest(unittest.TestCase):
 
             remotepath = next((f for f in files if f.endswith('.csv') or f.endswith('.txt')), None)
 
-            ftp.get(remotepath, f.name)
+            def file_uploaded():
+                print("File uploaded successfully")
 
-            assert os.path.exists(f.name)
-            assert os.path.isfile(f.name)
+            localpath = os.path.join('/tmp', 'newdir', os.path.basename(f.name))
+
+            ftp.get(remotepath, localpath, callback=file_uploaded)
+
+            assert os.path.exists(localpath)
+            assert os.path.isfile(localpath)
+
+    def test_get_wrong_callback(self):
+        with pytest.raises(AssertionError) as e_info:
+            with FTPClient(self.host, self.user, self.password) as ftp, tempfile.NamedTemporaryFile(mode='w') as f:
+                files = ftp.listdir(self.dir)
+
+                remotepath = next((f for f in files if f.endswith('.csv') or f.endswith('.txt')), None)
+
+                ftp.get(remotepath, f.name, callback='error')
+
+                assert os.path.exists(f.name)
+                assert os.path.isfile(f.name)
+
+    def test_put_wrong_callback(self):
+        with pytest.raises(AssertionError) as e_info:
+            with FTPClient(self.host, self.user, self.password) as ftp, tempfile.NamedTemporaryFile() as f:
+                remotepath = os.path.join(self.dir, os.path.basename(f.name))
+                ftp.put(f.name, remotepath, callback='error')
+
+    def test_put_invalid_file(self):
+        with pytest.raises(Exception) as e_info:
+            with FTPClient(self.host, self.user, self.password) as ftp:
+                remotepath = os.path.join(self.dir, 'foofiledoesnotexist')
+                ftp.put('foofiledoesnotexist', remotepath)
