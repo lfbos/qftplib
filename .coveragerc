@@ -1,0 +1,6 @@
+[run]
+omit =
+    tests/*
+    qftplib/__init__.py
+    qftplib/exceptions.py
+source = qftplib
