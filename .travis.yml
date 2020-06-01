@@ -19,5 +19,9 @@ jobs:
       language: python
       python:
         - 3.8
+      before_install:
+        - pip install -U setuptools wheel
+        - pip install -U twine
       script:
-        - python -c "print('Deploy to pypi')"
+        - python setup.py sdist
+        - twine upload dist/*
